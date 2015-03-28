@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150323201076) do
+ActiveRecord::Schema.define(version: 20150328155018) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -91,6 +91,16 @@ ActiveRecord::Schema.define(version: 20150323201076) do
 
   add_index "spree_assets", ["viewable_id"], name: "index_assets_on_viewable_id", using: :btree
   add_index "spree_assets", ["viewable_type", "type"], name: "index_assets_on_viewable_type_and_type", using: :btree
+
+  create_table "spree_authentication_methods", force: :cascade do |t|
+    t.string   "environment"
+    t.string   "provider"
+    t.string   "api_key"
+    t.string   "api_secret"
+    t.boolean  "active"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
 
   create_table "spree_calculators", force: :cascade do |t|
     t.string   "type"
@@ -204,6 +214,18 @@ ActiveRecord::Schema.define(version: 20150323201076) do
 
   add_index "spree_log_entries", ["source_id", "source_type"], name: "index_spree_log_entries_on_source_id_and_source_type", using: :btree
 
+  create_table "spree_option_type_translations", force: :cascade do |t|
+    t.integer  "spree_option_type_id"
+    t.string   "locale"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "name"
+    t.string   "presentation"
+  end
+
+  add_index "spree_option_type_translations", ["locale"], name: "index_spree_option_type_translations_on_locale", using: :btree
+  add_index "spree_option_type_translations", ["spree_option_type_id"], name: "index_spree_option_type_translations_on_spree_option_type_id", using: :btree
+
   create_table "spree_option_types", force: :cascade do |t|
     t.string   "name",         limit: 100
     t.string   "presentation", limit: 100
@@ -218,6 +240,18 @@ ActiveRecord::Schema.define(version: 20150323201076) do
     t.integer "prototype_id"
     t.integer "option_type_id"
   end
+
+  create_table "spree_option_value_translations", force: :cascade do |t|
+    t.integer  "spree_option_value_id"
+    t.string   "locale"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "name"
+    t.string   "presentation"
+  end
+
+  add_index "spree_option_value_translations", ["locale"], name: "index_spree_option_value_translations_on_locale", using: :btree
+  add_index "spree_option_value_translations", ["spree_option_value_id"], name: "index_spree_option_value_translations_on_spree_option_value_id", using: :btree
 
   create_table "spree_option_values", force: :cascade do |t|
     t.integer  "position"
@@ -341,6 +375,19 @@ ActiveRecord::Schema.define(version: 20150323201076) do
   add_index "spree_payments", ["payment_method_id"], name: "index_spree_payments_on_payment_method_id", using: :btree
   add_index "spree_payments", ["source_id", "source_type"], name: "index_spree_payments_on_source_id_and_source_type", using: :btree
 
+  create_table "spree_paypal_express_checkouts", force: :cascade do |t|
+    t.string   "token"
+    t.string   "payer_id"
+    t.string   "transaction_id"
+    t.string   "state",                 default: "complete"
+    t.string   "refund_transaction_id"
+    t.datetime "refunded_at"
+    t.string   "refund_type"
+    t.datetime "created_at"
+  end
+
+  add_index "spree_paypal_express_checkouts", ["transaction_id"], name: "index_spree_paypal_express_checkouts_on_transaction_id", using: :btree
+
   create_table "spree_preferences", force: :cascade do |t|
     t.text     "value"
     t.string   "key"
@@ -384,6 +431,34 @@ ActiveRecord::Schema.define(version: 20150323201076) do
   add_index "spree_product_properties", ["position"], name: "index_spree_product_properties_on_position", using: :btree
   add_index "spree_product_properties", ["product_id"], name: "index_product_properties_on_product_id", using: :btree
   add_index "spree_product_properties", ["property_id"], name: "index_spree_product_properties_on_property_id", using: :btree
+
+  create_table "spree_product_property_translations", force: :cascade do |t|
+    t.integer  "spree_product_property_id"
+    t.string   "locale"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "value"
+  end
+
+  add_index "spree_product_property_translations", ["locale"], name: "index_spree_product_property_translations_on_locale", using: :btree
+  add_index "spree_product_property_translations", ["spree_product_property_id"], name: "index_0968f57fbd8fb9f31050820cbb66109a266c516a", using: :btree
+
+  create_table "spree_product_translations", force: :cascade do |t|
+    t.integer  "spree_product_id"
+    t.string   "locale"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "name"
+    t.text     "description"
+    t.string   "meta_description"
+    t.string   "meta_keywords"
+    t.string   "slug"
+    t.datetime "deleted_at"
+  end
+
+  add_index "spree_product_translations", ["deleted_at"], name: "index_spree_product_translations_on_deleted_at", using: :btree
+  add_index "spree_product_translations", ["locale"], name: "index_spree_product_translations_on_locale", using: :btree
+  add_index "spree_product_translations", ["spree_product_id"], name: "index_spree_product_translations_on_spree_product_id", using: :btree
 
   create_table "spree_products", force: :cascade do |t|
     t.string   "name",                 default: "",   null: false
@@ -476,6 +551,18 @@ ActiveRecord::Schema.define(version: 20150323201076) do
   add_index "spree_promotion_rules_users", ["promotion_rule_id"], name: "index_promotion_rules_users_on_promotion_rule_id", using: :btree
   add_index "spree_promotion_rules_users", ["user_id"], name: "index_promotion_rules_users_on_user_id", using: :btree
 
+  create_table "spree_promotion_translations", force: :cascade do |t|
+    t.integer  "spree_promotion_id"
+    t.string   "locale"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "name"
+    t.string   "description"
+  end
+
+  add_index "spree_promotion_translations", ["locale"], name: "index_spree_promotion_translations_on_locale", using: :btree
+  add_index "spree_promotion_translations", ["spree_promotion_id"], name: "index_spree_promotion_translations_on_spree_promotion_id", using: :btree
+
   create_table "spree_promotions", force: :cascade do |t|
     t.string   "description"
     t.datetime "expires_at"
@@ -501,7 +588,7 @@ ActiveRecord::Schema.define(version: 20150323201076) do
 
   create_table "spree_properties", force: :cascade do |t|
     t.string   "name"
-    t.string   "presentation", null: false
+    t.string   "presentation"
     t.datetime "created_at",   null: false
     t.datetime "updated_at",   null: false
   end
@@ -510,6 +597,18 @@ ActiveRecord::Schema.define(version: 20150323201076) do
     t.integer "prototype_id"
     t.integer "property_id"
   end
+
+  create_table "spree_property_translations", force: :cascade do |t|
+    t.integer  "spree_property_id"
+    t.string   "locale"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "name"
+    t.string   "presentation"
+  end
+
+  add_index "spree_property_translations", ["locale"], name: "index_spree_property_translations_on_locale", using: :btree
+  add_index "spree_property_translations", ["spree_property_id"], name: "index_spree_property_translations_on_spree_property_id", using: :btree
 
   create_table "spree_prototypes", force: :cascade do |t|
     t.string   "name"
@@ -847,8 +946,24 @@ ActiveRecord::Schema.define(version: 20150323201076) do
   add_index "spree_tax_rates", ["tax_category_id"], name: "index_spree_tax_rates_on_tax_category_id", using: :btree
   add_index "spree_tax_rates", ["zone_id"], name: "index_spree_tax_rates_on_zone_id", using: :btree
 
+  create_table "spree_taxon_translations", force: :cascade do |t|
+    t.integer  "spree_taxon_id"
+    t.string   "locale"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "name"
+    t.text     "description"
+    t.string   "meta_title"
+    t.string   "meta_description"
+    t.string   "meta_keywords"
+    t.string   "permalink"
+  end
+
+  add_index "spree_taxon_translations", ["locale"], name: "index_spree_taxon_translations_on_locale", using: :btree
+  add_index "spree_taxon_translations", ["spree_taxon_id"], name: "index_spree_taxon_translations_on_spree_taxon_id", using: :btree
+
   create_table "spree_taxonomies", force: :cascade do |t|
-    t.string   "name",                   null: false
+    t.string   "name"
     t.datetime "created_at",             null: false
     t.datetime "updated_at",             null: false
     t.integer  "position",   default: 0
@@ -856,10 +971,21 @@ ActiveRecord::Schema.define(version: 20150323201076) do
 
   add_index "spree_taxonomies", ["position"], name: "index_spree_taxonomies_on_position", using: :btree
 
+  create_table "spree_taxonomy_translations", force: :cascade do |t|
+    t.integer  "spree_taxonomy_id"
+    t.string   "locale"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "name"
+  end
+
+  add_index "spree_taxonomy_translations", ["locale"], name: "index_spree_taxonomy_translations_on_locale", using: :btree
+  add_index "spree_taxonomy_translations", ["spree_taxonomy_id"], name: "index_spree_taxonomy_translations_on_spree_taxonomy_id", using: :btree
+
   create_table "spree_taxons", force: :cascade do |t|
     t.integer  "parent_id"
     t.integer  "position",          default: 0
-    t.string   "name",                          null: false
+    t.string   "name"
     t.string   "permalink"
     t.integer  "taxonomy_id"
     t.integer  "lft"
@@ -906,6 +1032,14 @@ ActiveRecord::Schema.define(version: 20150323201076) do
   end
 
   add_index "spree_trackers", ["active"], name: "index_spree_trackers_on_active", using: :btree
+
+  create_table "spree_user_authentications", force: :cascade do |t|
+    t.integer  "user_id"
+    t.string   "provider"
+    t.string   "uid"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "spree_users", force: :cascade do |t|
     t.string   "encrypted_password",     limit: 128

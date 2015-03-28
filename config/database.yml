@@ -8,6 +8,7 @@ default: &default
   
 development:
   <<: *default
+  host: localhost
   database: militaria_dev
   username: <%= ENV["PG_USER"] %>
   password: <%= ENV["PG_PWD"] %>

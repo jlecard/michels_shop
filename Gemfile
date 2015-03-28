@@ -45,6 +45,9 @@ end
 
 
 gem 'spree', '3.0.0'
+gem 'spree_social', :git => 'https://github.com/spree-contrib/spree_social.git', branch: '3-0-stable'
+gem 'spree_paypal_express', :git => 'https://github.com/spree-contrib/better_spree_paypal_express.git', branch: 'master'
+gem 'spree_i18n', github: 'spree-contrib/spree_i18n', branch: '3-0-stable'
 gem 'spree_gateway', github: 'spree/spree_gateway', branch: '3-0-stable'
 gem 'spree_auth_devise', github: 'spree/spree_auth_devise', branch: '3-0-stable'
 
